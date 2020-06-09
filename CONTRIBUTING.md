@@ -11,6 +11,7 @@ By contributing, you understand and agree that your work becomes the part of the
 * Ensure the bug was not already reported by searching on GitHub under [Issues](https://github.com/cbeleites/hyperSpec/issues).
 * If you're unable to find an open issue addressing the problem, open a new one. Be sure to include a title and clear description, as much relevant information as possible, and a code sample or an executable test case demonstrating the expected behavior that is not occurring.
 * Refer to the [Bug Reporting in R article](https://www.r-project.org/bugs.html) for guidance.
+* The ideal minimal working example is a unit test.
 
 ## Code and Documentation Styleguide
 
@@ -35,7 +36,7 @@ You *should not* directly contribute to `develop`, unless the change is trivial 
 
 * `feature/###-<feature_name>` for new features. Generally, for a new feature you should open an issue which *at least* describes the intended feature; it may go further and allow for discussion and refinement before much effort is expended.  `###` is the corresponding [issue number](https://github.com/cbeleites/hyperSpec/issues).
 * `bugfix/###-<bugfix_name>` for bugfixes
-* `release/x.y.z` for release preparation, where `x.y.z.` is the version to be released.
+* `release/x.y.z` for release preparation, where `x.y.z.` is the version to be released. See section "Release process" below for details.
 
 It is recommended to use the `git flow` tool to streamline the process (see [Cheatsheet for git flow](https://danielkummer.github.io/git-flow-cheatsheet/)). However, do not call `git flow xxx finish` as it makes a merge *without* the code review - instead, [finish your branch by opening a pull request](https://softwareengineering.stackexchange.com/a/189062/302312).
 
@@ -71,6 +72,31 @@ Commit often, try to make small atomic commits. An atomic commit addresses only 
 
 ## Versioning
 
-The project adheres to the semantic versioning guidelines, as outlined at https://semver.org/ (Work in progress, see #123).
+The project adheres to the semantic versioning guidelines, as outlined at https://semver.org/ (Work in progress, see [#123](https://github.com/cbeleites/hyperSpec/issues/123)).
+
+Briefly, the version string has the form `x.y.z` (or `major.minor.patch`), where the major number gets incremeted if a release introduces breaking changes, the minor one after any changes in functionality (new features of bugfixes), and the patch number is increased after any trivial change. If a major or minor number is incremented, all subsequent ones are set to zero.
+
+The version numbers refer only to commits in the `master` branch, and get incremented in one of two cases: 
+* during the release preparation, when a `release/x.y.z` branch buds off `develop` and merges into `master`.
+* after a hotfix, which also results in a new commit on `master`.
+
+### Release Process
+The process starts when the package is in a stable state that can be released to CRAN (release candidate). First, decide on a new version number `x.y.z` based on the severity of changes. Then:
+
+* Create a `release/x.y.z` branch using `git flow release start <x.y.z>` and push it with `git flow publish`
+* Open a pull request that merges into `master`
+* Update the version number in the `DESCRIPTION` file
+* Verify that the changes are listed in `NEWS.md`
+* Confirm that the package can be built for each plaftorm
+* Ensure that all check are passed on the tarballs you build (either on your machine or using CI) with `R CMD check --as-cran <package.tar.gz>`. The checks must pass for `R` versions `R-oldrel`, `R-release`, `R-patched`, and `R-devel`.
+* If any bugs are found, they must be fixed in the very same branch (see [here](https://stackoverflow.com/a/57507373/6029703) for details)
+* Once everything works use `git flow release finish <x.y.z>`. It will merge the release branch into both `master` and `develop`, and will assign a tag to the newly created commit in the `master` branch.
+
+### Unit Tests
+
+* If a unit test needs to be disabled temporarily, please use `skip("reason for switching off")`. 
+  This way, we'll be reminded that the test is switched off whenever the unit tests are run.
+
+<hr>
 
 Thanks! :heart:
