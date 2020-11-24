@@ -32,10 +32,10 @@ License: GPL (>= 3)
 LazyLoad: yes
 LazyData: yes
 Depends:
-    R (>= 3.6.0),
+    R (>= 3.4.1),
     lattice,
     grid,
-    ggplot2 (>= 2.2.0),
+    ggplot2,
     xml2
 Suggests:
     R.matlab,
